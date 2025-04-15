@@ -43,6 +43,31 @@ FROM
 WHERE
     g.player_id IS NULL;
 
+-- 問１１
+SELECT
+    c.group_name,
+    COUNT(g.id) AS total_goals
+FROM
+    goals g
+    LEFT JOIN players p ON g.player_id = p.id
+    LEFT JOIN pairings pr ON g.pairing_id = pr.id
+    LEFT JOIN countries c ON (
+        (
+            g.player_id IS NULL
+            AND c.id = pr.enemy_country_id
+        )
+        OR (
+            g.player_id IS NOT NULL
+            AND p.country_id = c.id
+        )
+    )
+WHERE
+    pr.kickoff BETWEEN '2014-06-13 00:00:00' AND '2014-06-27 23:59:59'
+GROUP BY
+    c.group_name
+ORDER BY
+    c.group_name;
+
 -- 問１２
 SELECT
     g.goal_time
